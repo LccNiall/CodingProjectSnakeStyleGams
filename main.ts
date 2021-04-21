@@ -3,56 +3,54 @@ function spawnFruit () {
     Fruit.set(LedSpriteProperty.Y, randint(0, 4))
 }
 input.onButtonPressed(Button.A, function () {
-    SnakeLength[0].turn(Direction.Left, 90)
+    Snake.turn(Direction.Left, 90)
 })
 function increaseSize () {
+    let SnakeLength: game.LedSprite[] = []
     SnakeLength.push(game.createSprite(SnakeLength[SnakeLength.length].get(LedSpriteProperty.X), SnakeLength[SnakeLength.length].get(LedSpriteProperty.Y)))
     SnakeLength[SnakeLength.length].set(LedSpriteProperty.Direction, SnakeLength[SnakeLength.length - 1].get(LedSpriteProperty.Direction))
     SnakeLength[SnakeLength.length].move(-1)
 }
-input.onButtonPressed(Button.AB, function () {
-    increaseSize()
-})
 input.onButtonPressed(Button.B, function () {
-    SnakeLength[0].turn(Direction.Right, 90)
+    Snake.turn(Direction.Right, 90)
 })
-control.onEvent(EventBusSource.MICROBIT_ID_BUTTON_A, EventBusValue.MICROBIT_EVT_ANY, function () {
-	
-})
-let LastBlock: game.LedSprite = null
-let index = 0
+let isOnEdge = 0
 let Fruit: game.LedSprite = null
-let SnakeLength: game.LedSprite[] = []
+let Snake: game.LedSprite = null
+game.setLife(3)
 let Score = 0
 let Speed = 2000
-SnakeLength = [game.createSprite(2, 5)]
-for (let value of SnakeLength) {
-    value.turn(Direction.Left, 90)
-}
+Snake = game.createSprite(2, 4)
+Snake.set(LedSpriteProperty.Direction, 0)
 Fruit = game.createSprite(0, 2)
 basic.forever(function () {
-    index = 0
-    for (let value of SnakeLength) {
-        LastBlock = value
-        if (index == 0) {
-            value.move(1)
-        } else {
-            value.set(LedSpriteProperty.Direction, LastBlock.get(LedSpriteProperty.Direction))
-            value.move(1)
-        }
-        basic.pause(Speed)
-    }
-    if (SnakeLength[0].isTouching(Fruit)) {
+    if (Snake.isTouching(Fruit)) {
         game.addScore(1)
         spawnFruit()
     }
-    if (SnakeLength[0].isTouchingEdge()) {
-        game.gameOver()
+    if (Snake.isTouchingEdge()) {
+        if (isOnEdge == 0) {
+            if (Snake.get(LedSpriteProperty.X) == 0 && Snake.get(LedSpriteProperty.Direction) == 270) {
+                isOnEdge = 1
+            } else if (Snake.get(LedSpriteProperty.X) > 0 && Snake.get(LedSpriteProperty.Direction) == 90) {
+                isOnEdge = 1
+            } else if (Snake.get(LedSpriteProperty.Y) == 0 && Snake.get(LedSpriteProperty.Direction) == 90) {
+                isOnEdge = 1
+            } else if (Snake.get(LedSpriteProperty.Y) == 4 && Snake.get(LedSpriteProperty.Direction) == 180) {
+                isOnEdge = 1
+            } else {
+                isOnEdge = 0
+            }
+        } else {
+            game.removeLife(1)
+        }
     }
+    basic.pause(Speed)
+    Snake.move(1)
 })
 control.inBackground(function () {
     if (Speed > 200) {
         basic.pause(3000)
-        Speed += -100
+        Speed = Speed - Speed / 4
     }
 })
