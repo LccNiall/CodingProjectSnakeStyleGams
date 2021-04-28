@@ -6,46 +6,58 @@ function spawnFruit () {
 input.onButtonPressed(Button.A, function () {
     Snake.turn(Direction.Left, 90)
 })
+input.onButtonPressed(Button.AB, function () {
+    if (isPaused == 0) {
+        game.pause()
+        isPaused = 1
+    } else {
+        game.resume()
+        isPaused = 0
+    }
+})
 input.onButtonPressed(Button.B, function () {
     Snake.turn(Direction.Right, 90)
 })
 function increaseSpeed () {
-    if (Speed > 500) {
+    if (Speed > 250) {
         Speed = Speed - Speed / 8
     }
-    if (Speed < 500) {
-        Speed = 500
+    if (Speed < 250) {
+        Speed = 250
     }
 }
 let isOnEdge = 0
+let isPaused = 0
 let Fruit: game.LedSprite = null
 let Snake: game.LedSprite = null
 let Speed = 0
 game.setLife(3)
 let Score = 0
-Speed = 2000
+Speed = 250
 Snake = game.createSprite(2, 4)
 Snake.set(LedSpriteProperty.Direction, 0)
-Fruit = game.createSprite(0, 2)
+Fruit = game.createSprite(randint(0, 4), randint(0, 4))
+Snake.set(LedSpriteProperty.Brightness, 255)
+Fruit.set(LedSpriteProperty.Brightness, 75)
 basic.forever(function () {
     if (Snake.isTouching(Fruit)) {
-        game.addScore(1)
+        Score += 1
         spawnFruit()
     }
     if (Snake.isTouchingEdge()) {
-        if (isOnEdge == 0) {
-            if (Snake.get(LedSpriteProperty.X) == 0 && Snake.get(LedSpriteProperty.Direction) == 270) {
-                isOnEdge = 1
-            } else if (Snake.get(LedSpriteProperty.X) == 4 && Snake.get(LedSpriteProperty.Direction) == 90) {
-                isOnEdge = 1
-            } else if (Snake.get(LedSpriteProperty.Y) == 0 && Snake.get(LedSpriteProperty.Direction) == 90) {
-                isOnEdge = 1
-            } else if (Snake.get(LedSpriteProperty.Y) == 4 && Snake.get(LedSpriteProperty.Direction) == 0) {
-                isOnEdge = 1
-            } else {
-                isOnEdge = 0
-            }
+        if (Snake.get(LedSpriteProperty.X) == 0 && Snake.get(LedSpriteProperty.Direction) == -90) {
+            isOnEdge += 1
+        } else if (Snake.get(LedSpriteProperty.X) == 4 && Snake.get(LedSpriteProperty.Direction) == 90) {
+            isOnEdge += 1
+        } else if (Snake.get(LedSpriteProperty.Y) == 0 && Snake.get(LedSpriteProperty.Direction) == 0) {
+            isOnEdge += 1
+        } else if (Snake.get(LedSpriteProperty.Y) == 4 && Snake.get(LedSpriteProperty.Direction) == 180) {
+            isOnEdge += 1
         } else {
+            isOnEdge = 0
+        }
+        if (isOnEdge >= 2) {
+            isOnEdge = 0
             game.removeLife(1)
             Snake.set(LedSpriteProperty.X, 2)
             Snake.set(LedSpriteProperty.Y, 4)
