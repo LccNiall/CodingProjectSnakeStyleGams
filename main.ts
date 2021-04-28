@@ -33,7 +33,7 @@ let Snake: game.LedSprite = null
 let Speed = 0
 game.setLife(3)
 let Score = 0
-Speed = 250
+Speed = 2000
 Snake = game.createSprite(2, 4)
 Snake.set(LedSpriteProperty.Direction, 0)
 Fruit = game.createSprite(randint(0, 4), randint(0, 4))
