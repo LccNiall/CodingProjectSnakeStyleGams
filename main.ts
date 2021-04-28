@@ -10,6 +10,7 @@ input.onButtonPressed(Button.AB, function () {
     if (isPaused == 0) {
         game.pause()
         isPaused = 1
+        basic.showNumber(Score)
     } else {
         game.resume()
         isPaused = 0
@@ -19,11 +20,11 @@ input.onButtonPressed(Button.B, function () {
     Snake.turn(Direction.Right, 90)
 })
 function increaseSpeed () {
-    if (Speed > 250) {
+    if (Speed > 200) {
         Speed = Speed - Speed / 8
     }
-    if (Speed < 250) {
-        Speed = 250
+    if (Speed < 200) {
+        Speed = 200
     }
 }
 let isOnEdge = 0
@@ -31,8 +32,9 @@ let isPaused = 0
 let Fruit: game.LedSprite = null
 let Snake: game.LedSprite = null
 let Speed = 0
-game.setLife(3)
 let Score = 0
+game.setLife(3)
+Score = 0
 Speed = 2000
 Snake = game.createSprite(2, 4)
 Snake.set(LedSpriteProperty.Direction, 0)
